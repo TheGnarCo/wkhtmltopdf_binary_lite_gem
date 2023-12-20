@@ -7,6 +7,20 @@
 # use this file except in compliance with the License. You may obtain a copy
 # of the License at http://www.apache.org/licenses/LICENSE-2.0
 
+#Local M2 OSX
+#RbConfig::CONFIG['host_os'] == 'darwin22'
+#RbConfig::CONFIG['host_cpu'] == 'arm64'
+
+#Local Compose on M2
+#RbConfig::CONFIG['host_os'] == 'linux'
+#RbConfig::CONFIG['host_cpu'] == 'aarch64'
+#os == 'debian_11'
+
+#AWS eec-web-dev
+#RbConfig::CONFIG['host_os'] == 'linux'
+#RbConfig::CONFIG['host_cpu'] == 'x86_64'
+#os == 'debian_11'
+
 require 'rbconfig'
 require 'zlib'
 
@@ -25,17 +39,6 @@ suffix = case RbConfig::CONFIG['host_os']
          when /linux/
            os = `. /etc/os-release 2> /dev/null && echo ${ID}_${VERSION_ID}`.strip
 
-           os = 'ubuntu_16.04' if os.start_with?('ubuntu_16.') ||
-                                  os.start_with?('ubuntu_17.') ||
-                                  os.start_with?('linuxmint_18.')
-
-           os = 'ubuntu_18.04' if os.start_with?('ubuntu_18.') ||
-                                  os.start_with?('ubuntu_19.') ||
-                                  os.start_with?('elementary') ||
-                                  os.start_with?('linuxmint_19.') ||
-                                  os.start_with?('pop') ||
-                                  os.start_with?('zorin')
-
            os = 'ubuntu_20.04' if os.start_with?('ubuntu_20.') ||
                                   os.start_with?('ubuntu_21.') ||
                                   os.start_with?('linuxmint_20.')
@@ -43,26 +46,11 @@ suffix = case RbConfig::CONFIG['host_os']
            os = 'ubuntu_22.04' if os.start_with?('ubuntu_22.') ||
                                   os.start_with?('linuxmint_21.')
 
-           os = 'centos_6' if (os.start_with?('amzn_') && os != 'amzn_2') ||
-                              (os.empty? && File.read('/etc/centos-release').start_with?('CentOS release 6'))
-
-           os = 'centos_7' if (os.start_with?('amzn_2') && !os.start_with?('amzn_20')) ||
-                              os.start_with?('rhel_7.')
-
-           os = 'centos_8' if os.start_with?('rocky_8') || os.start_with?('rhel_8.')
-
            os_based_on_debian_9 = os.start_with?('debian_9') ||
                                   os.start_with?('deepin')
-           os = 'debian_9' if os_based_on_debian_9
-
-           os = 'debian_10' if !os_based_on_debian_9 && os.start_with?('debian_10')
-
            os = 'debian_11' if !os_based_on_debian_9 && os.start_with?('debian_11')
 
            os = 'debian_12' if !os_based_on_debian_9 && os.start_with?('debian_12')
-
-           os = 'archlinux' if os.start_with?('arch_') ||
-                               os.start_with?('manjaro_')
 
            "#{os}_#{architecture}"
          when /darwin/
