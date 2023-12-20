@@ -7,20 +7,6 @@
 # use this file except in compliance with the License. You may obtain a copy
 # of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-#Local M2 OSX
-#RbConfig::CONFIG['host_os'] == 'darwin22'
-#RbConfig::CONFIG['host_cpu'] == 'arm64'
-
-#Local Compose on M2
-#RbConfig::CONFIG['host_os'] == 'linux'
-#RbConfig::CONFIG['host_cpu'] == 'aarch64'
-#os == 'debian_11'
-
-#AWS eec-web-dev
-#RbConfig::CONFIG['host_os'] == 'linux'
-#RbConfig::CONFIG['host_cpu'] == 'x86_64'
-#os == 'debian_11'
-
 require 'rbconfig'
 require 'zlib'
 
@@ -31,7 +17,7 @@ def architecture
   when 'x86_64'
     'amd64'
   else
-    'i386'
+    raise 'Invalid architecture, must be running on amd64 or arm64.'
   end
 end
 
@@ -39,18 +25,12 @@ suffix = case RbConfig::CONFIG['host_os']
          when /linux/
            os = `. /etc/os-release 2> /dev/null && echo ${ID}_${VERSION_ID}`.strip
 
-           os = 'ubuntu_20.04' if os.start_with?('ubuntu_20.') ||
-                                  os.start_with?('ubuntu_21.') ||
-                                  os.start_with?('linuxmint_20.')
-
            os = 'ubuntu_22.04' if os.start_with?('ubuntu_22.') ||
                                   os.start_with?('linuxmint_21.')
 
            os_based_on_debian_9 = os.start_with?('debian_9') ||
                                   os.start_with?('deepin')
            os = 'debian_11' if !os_based_on_debian_9 && os.start_with?('debian_11')
-
-           os = 'debian_12' if !os_based_on_debian_9 && os.start_with?('debian_12')
 
            "#{os}_#{architecture}"
          when /darwin/
